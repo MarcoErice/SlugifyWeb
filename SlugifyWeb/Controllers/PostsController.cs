@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SlugifyWeb.Data;
 using SlugifyWeb.Models;
 
@@ -13,10 +14,12 @@ namespace SlugifyWeb.Controllers
     public class PostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PostsController> _logger;
 
-        public PostsController(ApplicationDbContext context)
+        public PostsController(ApplicationDbContext context, ILogger<PostsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Posts
@@ -37,6 +40,7 @@ namespace SlugifyWeb.Controllers
                 .SingleOrDefaultAsync(m => m.PostID == id);
             if (post == null)
             {
+                _logger.LogWarning("Details: Could not find Post with ID=" + id.ToString());
                 return NotFound();
             }
 
